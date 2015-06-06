@@ -6,6 +6,7 @@ import android.app.Activity;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.TextView;
 
 import com.interaxon.libmuse.Accelerometer;
 import com.interaxon.libmuse.AnnotationData;
@@ -28,8 +29,27 @@ import com.interaxon.libmuse.MuseManager;
 import com.interaxon.libmuse.MusePreset;
 import com.interaxon.libmuse.MuseVersion;
 
+import butterknife.InjectView;
+
 
 public class Scan extends Activity {
+
+    @InjectView(R.id.clench)
+    TextView clench;
+    class DataListener extends MuseDataListener{
+
+        @Override
+        public void receiveMuseDataPacket(MuseDataPacket museData) {
+
+        }
+
+        @Override
+        public void receiveMuseArtifactPacket(MuseArtifactPacket museArtifactPacket) {
+            boolean clench = museArtifactPacket.getJawClench();
+
+
+        }
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

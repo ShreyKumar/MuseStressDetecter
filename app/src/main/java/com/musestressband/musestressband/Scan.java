@@ -35,7 +35,8 @@ import butterknife.InjectView;
 public class Scan extends Activity {
 
     @InjectView(R.id.clench)
-    TextView clench;
+    TextView tvClench;
+
     class DataListener extends MuseDataListener{
 
         @Override
@@ -46,6 +47,10 @@ public class Scan extends Activity {
         @Override
         public void receiveMuseArtifactPacket(MuseArtifactPacket museArtifactPacket) {
             boolean clench = museArtifactPacket.getJawClench();
+
+            if(clench)
+                tvClench.setText("Jaw Clenched");
+            else tvClench.setText("Jaw Relaxed");
 
 
         }

@@ -22,5 +22,5 @@ android {
 dependencies {
     compile files('libs/libmuseandroid.jar')
     compile files('src/main/libs/libmuseandroid.jar')
-    compile 'com.jakewharton:butterknife:6.1.0'
+    //compile 'com.jakewharton:butterknife:6.1.0'
 }

@@ -21,6 +21,7 @@ public class Detect extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_detect);
         //create a new MuseManager
+        /*
         pairedDevices = MuseManager.getPairedMuses();
         String var;
         if(pairedDevices.size() >= 1) {
@@ -30,6 +31,7 @@ public class Detect extends Activity {
         }
 
         Log.i("connected", var);
+        */
     }
 
     @Override

@@ -29,13 +29,12 @@ import com.interaxon.libmuse.MuseManager;
 import com.interaxon.libmuse.MusePreset;
 import com.interaxon.libmuse.MuseVersion;
 
-//import butterknife.InjectView;
+import butterknife.InjectView;
 
 
 public class Scan extends Activity {
 
-    //@InjectView(R.id.clench)
-    TextView tvClench;
+    TextView tvClench = (TextView) findViewById(R.id.clench);
 
     class DataListener extends MuseDataListener{
 

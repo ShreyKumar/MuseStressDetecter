@@ -40,8 +40,8 @@ public class MainActivity extends Activity {
         return super.onOptionsItemSelected(item);
     }
 
-    @OnClick(R.id.button)
-    void onClick(View view) {
+
+    public void detect(View view) {
         Intent intent = new Intent(this, Detect.class);
         startActivity(intent);
     }

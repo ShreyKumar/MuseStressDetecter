@@ -2,18 +2,34 @@ package com.musestressband.musestressband;
 
 import android.app.Activity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+
+import com.interaxon.libmuse.Muse;
+import com.interaxon.libmuse.MuseManager;
+
+import java.util.List;
 
 
 public class Detect extends Activity {
 
+    List<Muse> pairedDevices;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_detect);
+        //create a new MuseManager
+        pairedDevices = MuseManager.getPairedMuses();
+        String var;
+        if(pairedDevices.size() >= 1) {
+            var = "yes";
+        } else {
+            var = "no";
+        }
 
-
+        Log.i("connected", var);
     }
 
     @Override
@@ -36,5 +52,9 @@ public class Detect extends Activity {
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    public boolean isConnected() {
+        return pairedDevices.size() >= 1;
     }
 }

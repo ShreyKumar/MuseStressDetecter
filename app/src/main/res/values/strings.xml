@@ -6,4 +6,5 @@
     <string name="imstress">I'm Stressed</string>
     <string name="clickme">Click to begin</string>
     <string name="title_activity_detect">Detect</string>
+    <string name="title_activity_scan">Scan</string>
 </resources>

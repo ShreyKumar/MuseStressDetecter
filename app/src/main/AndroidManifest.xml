@@ -20,6 +20,10 @@
             android:name=".Detect"
             android:label="@string/title_activity_detect" >
         </activity>
+        <activity
+            android:name=".Scan"
+            android:label="@string/title_activity_scan" >
+        </activity>
     </application>
 
 </manifest>

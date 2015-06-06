@@ -7,6 +7,8 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 
+import butterknife.OnClick;
+import butterknife.InjectView;
 
 public class MainActivity extends Activity {
 
@@ -38,7 +40,8 @@ public class MainActivity extends Activity {
         return super.onOptionsItemSelected(item);
     }
 
-    private void detect(View view) {
+    @OnClick(R.id.button)
+    void onClick(View view) {
         Intent intent = new Intent(this, Detect.class);
         startActivity(intent);
     }

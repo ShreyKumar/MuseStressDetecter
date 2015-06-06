@@ -52,7 +52,6 @@ public class Scan extends Activity {
                 tvClench.setText("Jaw Clenched");
             else tvClench.setText("Jaw Relaxed");
 
-
         }
     }
 

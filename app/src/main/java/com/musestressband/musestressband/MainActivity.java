@@ -1,8 +1,11 @@
 package com.musestressband.musestressband;
 
 import java.io.Console;
+import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.lang.ref.WeakReference;
+import java.util.Queue;
 
 import android.app.Activity;
 import android.content.Intent;
@@ -47,6 +50,10 @@ public class MainActivity extends Activity {
             this.activityRef = activityRef;
         }
 
+        /**
+         *
+         * @param museConnectionPacket
+         */
         @Override
         public void receiveMuseConnectionPacket(MuseConnectionPacket museConnectionPacket) {
 
@@ -82,6 +89,7 @@ public class MainActivity extends Activity {
             this.activityRef = activityRef;
         }
 
+
         @Override
         public void receiveMuseDataPacket(MuseDataPacket museDataPacket) {
 
@@ -92,21 +100,27 @@ public class MainActivity extends Activity {
         public void receiveMuseArtifactPacket(MuseArtifactPacket museArtifactPacket) {
             final boolean clench = museArtifactPacket.getJawClench();
             Activity activity = activityRef.get();
-            if(activity != null){
+            final ArrayList<Clench> clenches = new ArrayList<Clench>();
+
+            if (clench) {
+                clenches.add(new Clench(new Date(), 1));
+            } else {
+                clenches.add(new Clench(new Date(), 0));
+            }
+
+            /*
+            if(activity != null) {
                 activity.runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        TextView ClenchStat = (TextView) findViewById(R.id.ClenchStat);
-                        ClenchStat.setText(clench+"");
                     }
                 });
             }
-
-
-
-
-
+            */
         }
+
+
+
     }
 
     Button button;
@@ -204,4 +218,6 @@ public class MainActivity extends Activity {
         muse.setPreset(MusePreset.PRESET_14);
         muse.enableDataTransmission(dataTransmission);
     }
+
+
 }

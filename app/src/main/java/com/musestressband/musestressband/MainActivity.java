@@ -93,50 +93,60 @@ public class MainActivity extends Activity {
 
         @Override
         public void receiveMuseDataPacket(MuseDataPacket museDataPacket) {
-            switch(museDataPacket.getPacketType()){
-                case ALPHA_ABSOLUTE:{
+
+            switch (museDataPacket.getPacketType()) {
+                case ALPHA_ABSOLUTE: {
                     ArrayList<Double> values = museDataPacket.getValues();
                     Double avg = new Double(0);
-                    for(int i = 0; i < values.size(); i++)
+                    for (int i = 0; i < values.size(); i++)
                         avg += values.get(i);
-                    avg = avg/values.size();
+                    avg = avg / values.size();
                     long time = System.currentTimeMillis();
                     WaveMagnitude waveObj = new WaveMagnitude(avg, time);
                     alpha.add(0, waveObj);
 
-                    while(waveObj.getTimestamp()-alpha.get(alpha.size()-1).getTimestamp() > minute)
+                    while (waveObj.getTimestamp() - alpha.get(alpha.size() - 1).getTimestamp() > minute)
                         alpha.remove(alpha.size() - 1);
 
 
                     Activity activity = activityRef.get();
-                    if(activity != null){
+                    if (activity != null) {
                         activity.runOnUiThread(new Runnable() {
                             @Override
                             public void run() {
                                 TextView alphaArray = (TextView) findViewById(R.id.AlphaArray);
-                                alphaArray.setText(alpha.size()+"");
+                                alphaArray.setText(alpha.size() + "");
                             }
                         });
                     }
                 }
-                case BETA_ABSOLUTE:{
+                case BETA_ABSOLUTE: {
                     ArrayList<Double> values = museDataPacket.getValues();
                     Double avg = new Double(0);
-                    for(int i = 0; i < values.size(); i++)
+                    for (int i = 0; i < values.size(); i++)
                         avg += values.get(i);
-                    avg = avg/values.size();
+                    avg = avg / values.size();
                     long time = System.currentTimeMillis();
                     WaveMagnitude waveObj = new WaveMagnitude(avg, time);
                     beta.add(0, waveObj);
 
-                    while(waveObj.getTimestamp()-beta.get(beta.size()-1).getTimestamp() > minute)
+                    while (waveObj.getTimestamp() - beta.get(beta.size() - 1).getTimestamp() > minute)
                         beta.remove(beta.size() - 1);
 
                 }
             }
+            int numClenches = 0;
+            for(int i =0; i < clenches.size(); i++)
+                numClenches += clenches.get(i).getIsClench();
 
-            Thread t = new Thread( new Analysis());
-            t.start();
+            if(numClenches > 6) {
+                Button button = (Button) findViewById(R.id.button);
+                button.setText("stress");
+
+            }
+//
+//            Thread t = new Thread(new Analysis());
+//            t.start();
         }
 
         @Override
@@ -178,6 +188,7 @@ public class MainActivity extends Activity {
     private ArrayList<WaveMagnitude> beta = null;
     private static ArrayList<Clench> clenches;
     private static AlertDialog.Builder builder;
+    private static Thread t;
 
     public MainActivity(){
         WeakReference<Activity> weakActivity =
@@ -275,19 +286,20 @@ public class MainActivity extends Activity {
         muse.enableDataTransmission(dataTransmission);
     }
 
-    private static class Analysis implements Runnable{
-
-        @Override
-        public void run() {
-            int numClenches = 0;
-            for(int i =0; i < clenches.size(); i++)
-                numClenches += clenches.get(i).getIsClench();
-
-            if(numClenches > 2) {
-               button.setText("You stressed bra");
-            }
-
-        }
-    }
+//    private static class Analysis implements Runnable{
+//
+//        @Override
+//        public void run() {
+//            int numClenches = 0;
+//            for(int i =0; i < clenches.size(); i++)
+//                numClenches += clenches.get(i).getIsClench();
+//
+//            if(numClenches > 40) {
+//                button.setText("You stressed bra");
+//
+//            }
+//
+//        }
+//    }
 
 }

@@ -34,7 +34,8 @@ import butterknife.InjectView;
 
 public class Scan extends Activity {
 
-    TextView tvClench = (TextView) findViewById(R.id.clench);
+    TextView tvClench;
+
 
     class DataListener extends MuseDataListener{
 
@@ -58,6 +59,7 @@ public class Scan extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_scan);
+        tvClench = (TextView) findViewById(R.id.clench);
 
 
 

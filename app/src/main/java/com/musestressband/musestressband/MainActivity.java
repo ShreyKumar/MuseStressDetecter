@@ -1,5 +1,7 @@
 package com.musestressband.musestressband;
 
+import java.util.List;
+
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
@@ -7,8 +9,28 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 
-import butterknife.OnClick;
-import butterknife.InjectView;
+import com.interaxon.libmuse.MuseManager;
+import com.interaxon.libmuse.Muse;
+import com.interaxon.libmuse.Accelerometer;
+import com.interaxon.libmuse.AnnotationData;
+import com.interaxon.libmuse.ConnectionState;
+import com.interaxon.libmuse.Eeg;
+import com.interaxon.libmuse.LibMuseVersion;
+import com.interaxon.libmuse.MessageType;
+import com.interaxon.libmuse.MuseArtifactPacket;
+import com.interaxon.libmuse.MuseConfiguration;
+import com.interaxon.libmuse.MuseConnectionListener;
+import com.interaxon.libmuse.MuseConnectionPacket;
+import com.interaxon.libmuse.MuseDataListener;
+import com.interaxon.libmuse.MuseDataPacket;
+import com.interaxon.libmuse.MuseDataPacketType;
+import com.interaxon.libmuse.MuseFileFactory;
+import com.interaxon.libmuse.MuseFileReader;
+import com.interaxon.libmuse.MuseFileWriter;
+import com.interaxon.libmuse.MusePreset;
+import com.interaxon.libmuse.MuseVersion;
+
+
 
 public class MainActivity extends Activity {
 
@@ -42,7 +64,12 @@ public class MainActivity extends Activity {
 
 
     public void detect(View view) {
-        Intent intent = new Intent(this, Detect.class);
+
+        List<Muse> muses = MuseManager.getPairedMuses();
+
+        Intent intent = new Intent(this, Scan.class);
         startActivity(intent);
+
+
     }
 }

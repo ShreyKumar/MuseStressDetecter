@@ -42,5 +42,13 @@
         android:layout_centerHorizontal="true"
         />
 
+    <TextView
+        android:id="@+id/AlphaArray"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/ClenchStat"
+        android:layout_centerHorizontal="true"
+        />
+
 
 </RelativeLayout>

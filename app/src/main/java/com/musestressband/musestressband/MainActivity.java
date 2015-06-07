@@ -92,7 +92,35 @@ public class MainActivity extends Activity {
 
         @Override
         public void receiveMuseDataPacket(MuseDataPacket museDataPacket) {
+            switch(museDataPacket.getPacketType()){
+                case ALPHA_ABSOLUTE:{
+                    List<Double> values = museDataPacket.getValues();
+                    Double avg = new Double(0);
+                    for(int i = 0; i < values.size(); i++)
+                        avg += values.get(i);
+                    avg = avg/values.size();
+                    long time = museDataPacket.getTimestamp();
+                    WaveMagnitude waveObj = new WaveMagnitude(avg, time);
+                    alpha.add(0,waveObj);
 
+                    while(waveObj.getTimestamp()-alpha.get(alpha.size()-1).getTimestamp() > minute)
+                        alpha.remove(alpha.size()-1);
+
+                    Activity activity = activityRef.get();
+                    if(activity != null){
+                        activity.runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                TextView alphaArray = (TextView) findViewById(R.id.AlphaArray);
+                                alphaArray.setText(alpha.size());
+                            }
+                        });
+                    }
+
+
+
+                }
+            }
 
         }
 
@@ -123,12 +151,13 @@ public class MainActivity extends Activity {
 
     }
 
-    Button button;
+    private final long minute = 60000;
+    private Button button;
     private ConnectionListener connectionListener = null;
     private DataListener dataListener = null;
     private Muse muse = null;
     private boolean dataTransmission = true;
-
+    private ArrayList<WaveMagnitude> alpha = null;
 
     public MainActivity(){
         WeakReference<Activity> weakActivity =

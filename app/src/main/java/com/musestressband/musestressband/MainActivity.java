@@ -8,6 +8,7 @@ import java.lang.ref.WeakReference;
 import java.util.Queue;
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
@@ -133,6 +134,9 @@ public class MainActivity extends Activity {
 
                 }
             }
+
+            Thread t = new Thread( new Analysis());
+            t.start();
         }
 
         @Override
@@ -165,14 +169,15 @@ public class MainActivity extends Activity {
     }
 
     private final long minute = 60000;
-    private Button button;
+    private static Button button;
     private ConnectionListener connectionListener = null;
     private DataListener dataListener = null;
     private Muse muse = null;
     private boolean dataTransmission = true;
     private ArrayList<WaveMagnitude> alpha = null;
     private ArrayList<WaveMagnitude> beta = null;
-    private ArrayList<Clench> clenches;
+    private static ArrayList<Clench> clenches;
+    private static AlertDialog.Builder builder;
 
     public MainActivity(){
         WeakReference<Activity> weakActivity =
@@ -190,6 +195,8 @@ public class MainActivity extends Activity {
         alpha = new ArrayList<WaveMagnitude>();
         beta = new ArrayList<WaveMagnitude>();
         clenches = new ArrayList<Clench>();
+        builder = new AlertDialog.Builder(this);
+
     }
 
     @Override
@@ -272,6 +279,13 @@ public class MainActivity extends Activity {
 
         @Override
         public void run() {
+            int numClenches = 0;
+            for(int i =0; i < clenches.size(); i++)
+                numClenches += clenches.get(i).getIsClench();
+
+            if(numClenches > 2) {
+               button.setText("You stressed bra");
+            }
 
         }
     }

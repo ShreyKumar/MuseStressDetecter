@@ -126,7 +126,7 @@ public class MainActivity extends Activity {
                     avg = avg/values.size();
                     long time = System.currentTimeMillis();
                     WaveMagnitude waveObj = new WaveMagnitude(avg, time);
-                    beta.add(0,waveObj);
+                    beta.add(0, waveObj);
 
                     while(waveObj.getTimestamp()-beta.get(beta.size()-1).getTimestamp() > minute)
                         beta.remove(beta.size() - 1);
@@ -139,14 +139,16 @@ public class MainActivity extends Activity {
         public void receiveMuseArtifactPacket(MuseArtifactPacket museArtifactPacket) {
             final boolean clench = museArtifactPacket.getJawClench();
             Activity activity = activityRef.get();
-            final ArrayList<Clench> clenches = new ArrayList<Clench>();
 
+            long time = System.currentTimeMillis();
             if (clench) {
-                clenches.add(new Clench(new Date(), 1));
+                clenches.add(new Clench(time, 1));
             } else {
-                clenches.add(new Clench(new Date(), 0));
+                clenches.add(new Clench(time, 0));
             }
 
+            while(time-clenches.get(clenches.size()-1).getTimestamp() > minute)
+                clenches.remove(clenches.size()-1);
             /*
             if(activity != null) {
                 activity.runOnUiThread(new Runnable() {
@@ -170,6 +172,7 @@ public class MainActivity extends Activity {
     private boolean dataTransmission = true;
     private ArrayList<WaveMagnitude> alpha = null;
     private ArrayList<WaveMagnitude> beta = null;
+    private ArrayList<Clench> clenches;
 
     public MainActivity(){
         WeakReference<Activity> weakActivity =
@@ -186,6 +189,7 @@ public class MainActivity extends Activity {
         setContentView(R.layout.activity_main);
         alpha = new ArrayList<WaveMagnitude>();
         beta = new ArrayList<WaveMagnitude>();
+        clenches = new ArrayList<Clench>();
     }
 
     @Override
@@ -242,6 +246,8 @@ public class MainActivity extends Activity {
 
 
 
+
+
     }
 
 
@@ -262,5 +268,12 @@ public class MainActivity extends Activity {
         muse.enableDataTransmission(dataTransmission);
     }
 
+    private static class Analysis implements Runnable{
+
+        @Override
+        public void run() {
+
+        }
+    }
 
 }

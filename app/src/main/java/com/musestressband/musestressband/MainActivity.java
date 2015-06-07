@@ -8,6 +8,7 @@ import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Button;
 
 import com.interaxon.libmuse.MuseManager;
 import com.interaxon.libmuse.Muse;
@@ -67,8 +68,15 @@ public class MainActivity extends Activity {
 
         List<Muse> muses = MuseManager.getPairedMuses();
 
-        Intent intent = new Intent(this, Scan.class);
-        startActivity(intent);
+        if(muses.size() > 0) {
+            Intent intent = new Intent(this, Scan.class);
+            startActivity(intent);
+        }
+        else{
+            Button button = (Button) view;
+            button.setText("you suck");
+        }
+
 
 
     }

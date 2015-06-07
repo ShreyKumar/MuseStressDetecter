@@ -94,17 +94,18 @@ public class MainActivity extends Activity {
         public void receiveMuseDataPacket(MuseDataPacket museDataPacket) {
             switch(museDataPacket.getPacketType()){
                 case ALPHA_ABSOLUTE:{
-                    List<Double> values = museDataPacket.getValues();
+                    ArrayList<Double> values = museDataPacket.getValues();
                     Double avg = new Double(0);
                     for(int i = 0; i < values.size(); i++)
                         avg += values.get(i);
                     avg = avg/values.size();
-                    long time = museDataPacket.getTimestamp();
+                    long time = System.currentTimeMillis();
                     WaveMagnitude waveObj = new WaveMagnitude(avg, time);
-                    alpha.add(0,waveObj);
+                    alpha.add(0, waveObj);
 
                     while(waveObj.getTimestamp()-alpha.get(alpha.size()-1).getTimestamp() > minute)
-                        alpha.remove(alpha.size()-1);
+                        alpha.remove(alpha.size() - 1);
+
 
                     Activity activity = activityRef.get();
                     if(activity != null){
@@ -112,16 +113,37 @@ public class MainActivity extends Activity {
                             @Override
                             public void run() {
                                 TextView alphaArray = (TextView) findViewById(R.id.AlphaArray);
-                                alphaArray.setText(alpha.size());
+                                alphaArray.setText(alpha.size()+"");
                             }
                         });
                     }
+                }
+                case BETA_ABSOLUTE:{
+                    ArrayList<Double> values = museDataPacket.getValues();
+                    Double avg = new Double(0);
+                    for(int i = 0; i < values.size(); i++)
+                        avg += values.get(i);
+                    avg = avg/values.size();
+                    long time = System.currentTimeMillis();
+                    WaveMagnitude waveObj = new WaveMagnitude(avg, time);
+                    beta.add(0,waveObj);
+
+                    while(waveObj.getTimestamp()-beta.get(beta.size()-1).getTimestamp() > minute)
+                        beta.remove(beta.size() - 1);
 
 
-
+                    Activity activity = activityRef.get();
+                    if(activity != null){
+                        activity.runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                TextView alphaArray = (TextView) findViewById(R.id.AlphaArray);
+                                alphaArray.setText(beta.size()+"");
+                            }
+                        });
+                    }
                 }
             }
-
         }
 
         @Override
@@ -158,6 +180,7 @@ public class MainActivity extends Activity {
     private Muse muse = null;
     private boolean dataTransmission = true;
     private ArrayList<WaveMagnitude> alpha = null;
+    private ArrayList<WaveMagnitude> beta = null;
 
     public MainActivity(){
         WeakReference<Activity> weakActivity =
@@ -172,6 +195,8 @@ public class MainActivity extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        alpha = new ArrayList<WaveMagnitude>();
+        beta = new ArrayList<WaveMagnitude>();
     }
 
     @Override
@@ -239,7 +264,7 @@ public class MainActivity extends Activity {
         muse.registerDataListener(dataListener,
                 MuseDataPacketType.EEG);
         muse.registerDataListener(dataListener,
-                MuseDataPacketType.ALPHA_RELATIVE);
+                MuseDataPacketType.ALPHA_ABSOLUTE);
         muse.registerDataListener(dataListener,
                 MuseDataPacketType.ARTIFACTS);
         muse.registerDataListener(dataListener,

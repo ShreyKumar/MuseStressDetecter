@@ -65,7 +65,7 @@ public class MainActivity extends Activity {
 
 
     public void detect(View view) {
-
+        MuseManager.refreshPairedMuses();
         List<Muse> muses = MuseManager.getPairedMuses();
 
         if(muses.size() > 0) {

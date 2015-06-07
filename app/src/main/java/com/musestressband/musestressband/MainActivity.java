@@ -131,17 +131,6 @@ public class MainActivity extends Activity {
                     while(waveObj.getTimestamp()-beta.get(beta.size()-1).getTimestamp() > minute)
                         beta.remove(beta.size() - 1);
 
-
-                    Activity activity = activityRef.get();
-                    if(activity != null){
-                        activity.runOnUiThread(new Runnable() {
-                            @Override
-                            public void run() {
-                                TextView alphaArray = (TextView) findViewById(R.id.AlphaArray);
-                                alphaArray.setText(beta.size()+"");
-                            }
-                        });
-                    }
                 }
             }
         }

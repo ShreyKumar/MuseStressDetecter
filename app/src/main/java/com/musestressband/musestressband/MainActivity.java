@@ -1,14 +1,18 @@
 package com.musestressband.musestressband;
 
+import java.io.Console;
 import java.util.List;
+import java.lang.ref.WeakReference;
 
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
+import android.widget.TextView;
 
 import com.interaxon.libmuse.MuseManager;
 import com.interaxon.libmuse.Muse;
@@ -34,6 +38,20 @@ import com.interaxon.libmuse.MuseVersion;
 
 
 public class MainActivity extends Activity {
+
+    Button button;
+    private ConnectionListener connectionListener = null;
+    private Muse muse = null;
+    private boolean dataTransmission = true;
+
+
+    public MainActivity(){
+        WeakReference<Activity> weakActivity =
+                new WeakReference<Activity>(this);
+
+        connectionListener = new ConnectionListener(weakActivity);
+
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -65,19 +83,72 @@ public class MainActivity extends Activity {
 
 
     public void detect(View view) {
+
+        button = (Button) view;
+        TextView ConStat = (TextView) findViewById(R.id.ConStat);
+
         MuseManager.refreshPairedMuses();
         List<Muse> muses = MuseManager.getPairedMuses();
 
         if(muses.size() > 0) {
-            Intent intent = new Intent(this, Scan.class);
-            startActivity(intent);
+            muse = muses.get(0);
+            registerListeners();
+
+            try {
+                muse.runAsynchronously();
+            } catch (Exception e) {
+                Log.e("Muse Headband", e.toString());
+            }
+//            button.setEnabled(false);
+//            button.setVisibility(View.INVISIBLE);
+
+            ConStat.setText(muse.getConnectionState().toString());
+//            Intent intent = new Intent(this, Scan.class);
+//            startActivity(intent);
         }
         else{
-            Button button = (Button) view;
+
             button.setText("you suck");
         }
 
 
 
+    }
+
+    class ConnectionListener extends MuseConnectionListener{
+
+        final WeakReference<Activity> activityRef;
+
+        ConnectionListener(final WeakReference<Activity> activityRef) {
+            this.activityRef = activityRef;
+        }
+
+        @Override
+        public void receiveMuseConnectionPacket(MuseConnectionPacket museConnectionPacket) {
+
+
+            TextView ConStat = (TextView) findViewById(R.id.ConStat);
+
+            String ConnectionStatus = museConnectionPacket.getCurrentConnectionState().toString();
+
+            ConStat.setText(ConnectionStatus);
+
+        }
+    }
+
+    private void registerListeners() {
+        muse.registerConnectionListener(connectionListener);
+//        muse.registerDataListener(dataListener,
+//                MuseDataPacketType.ACCELEROMETER);
+//        muse.registerDataListener(dataListener,
+//                MuseDataPacketType.EEG);
+//        muse.registerDataListener(dataListener,
+//                MuseDataPacketType.ALPHA_RELATIVE);
+//        muse.registerDataListener(dataListener,
+//                MuseDataPacketType.ARTIFACTS);
+//        muse.registerDataListener(dataListener,
+//                MuseDataPacketType.BATTERY);
+        muse.setPreset(MusePreset.PRESET_14);
+        muse.enableDataTransmission(dataTransmission);
     }
 }

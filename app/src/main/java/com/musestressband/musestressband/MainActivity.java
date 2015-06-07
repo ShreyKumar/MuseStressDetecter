@@ -39,8 +39,79 @@ import com.interaxon.libmuse.MuseVersion;
 
 public class MainActivity extends Activity {
 
+    class ConnectionListener extends MuseConnectionListener{
+
+        final WeakReference<Activity> activityRef;
+
+        ConnectionListener(final WeakReference<Activity> activityRef) {
+            this.activityRef = activityRef;
+        }
+
+        @Override
+        public void receiveMuseConnectionPacket(MuseConnectionPacket museConnectionPacket) {
+
+            final String ConnectionStatus = museConnectionPacket.getCurrentConnectionState().toString();
+            TextView ConStat = (TextView) findViewById(R.id.ConStat);
+            Activity activity = activityRef.get();
+            // UI thread is used here only because we need to update
+            // TextView values. You don't have to use another thread, unless
+            // you want to run disconnect() or connect() from connection packet
+            // handler. In this case creating another thread is required.
+            if (activity != null) {
+                activity.runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        TextView ConStat = (TextView) findViewById(R.id.ConStat);
+
+                        ConStat.setText(ConnectionStatus);
+                    }
+                });
+            }
+
+
+
+        }
+    }
+
+    class DataListener extends MuseDataListener{
+
+        final WeakReference<Activity> activityRef;
+        private MuseFileWriter fileWriter;
+
+        DataListener(final WeakReference<Activity> activityRef) {
+            this.activityRef = activityRef;
+        }
+
+        @Override
+        public void receiveMuseDataPacket(MuseDataPacket museDataPacket) {
+
+
+        }
+
+        @Override
+        public void receiveMuseArtifactPacket(MuseArtifactPacket museArtifactPacket) {
+            final boolean clench = museArtifactPacket.getJawClench();
+            Activity activity = activityRef.get();
+            if(activity != null){
+                activity.runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        TextView ClenchStat = (TextView) findViewById(R.id.ClenchStat);
+                        ClenchStat.setText(clench+"");
+                    }
+                });
+            }
+
+
+
+
+
+        }
+    }
+
     Button button;
     private ConnectionListener connectionListener = null;
+    private DataListener dataListener = null;
     private Muse muse = null;
     private boolean dataTransmission = true;
 
@@ -50,6 +121,7 @@ public class MainActivity extends Activity {
                 new WeakReference<Activity>(this);
 
         connectionListener = new ConnectionListener(weakActivity);
+        dataListener = new DataListener(weakActivity);
 
     }
 
@@ -115,39 +187,20 @@ public class MainActivity extends Activity {
 
     }
 
-    class ConnectionListener extends MuseConnectionListener{
 
-        final WeakReference<Activity> activityRef;
-
-        ConnectionListener(final WeakReference<Activity> activityRef) {
-            this.activityRef = activityRef;
-        }
-
-        @Override
-        public void receiveMuseConnectionPacket(MuseConnectionPacket museConnectionPacket) {
-
-
-            TextView ConStat = (TextView) findViewById(R.id.ConStat);
-
-            String ConnectionStatus = museConnectionPacket.getCurrentConnectionState().toString();
-
-            ConStat.setText(ConnectionStatus);
-
-        }
-    }
 
     private void registerListeners() {
         muse.registerConnectionListener(connectionListener);
-//        muse.registerDataListener(dataListener,
-//                MuseDataPacketType.ACCELEROMETER);
-//        muse.registerDataListener(dataListener,
-//                MuseDataPacketType.EEG);
-//        muse.registerDataListener(dataListener,
-//                MuseDataPacketType.ALPHA_RELATIVE);
-//        muse.registerDataListener(dataListener,
-//                MuseDataPacketType.ARTIFACTS);
-//        muse.registerDataListener(dataListener,
-//                MuseDataPacketType.BATTERY);
+        muse.registerDataListener(dataListener,
+                MuseDataPacketType.ACCELEROMETER);
+        muse.registerDataListener(dataListener,
+                MuseDataPacketType.EEG);
+        muse.registerDataListener(dataListener,
+                MuseDataPacketType.ALPHA_RELATIVE);
+        muse.registerDataListener(dataListener,
+                MuseDataPacketType.ARTIFACTS);
+        muse.registerDataListener(dataListener,
+                MuseDataPacketType.BATTERY);
         muse.setPreset(MusePreset.PRESET_14);
         muse.enableDataTransmission(dataTransmission);
     }
